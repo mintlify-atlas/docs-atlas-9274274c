@@ -1,0 +1,77 @@
+---
+title: "Introduction"
+description: "A lightweight TypeScript utility library with helper functions for common operations"
+---
+
+## Welcome to util
+
+**util** is a collection of lightweight TypeScript utility functions designed to simplify common operations in your projects. From type-safe comparisons to file system helpers and TypeScript type utilities, util provides the building blocks you need without the bloat.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Type-Safe Utilities" icon="shield-check">
+    Comparison and boolean utilities with full TypeScript support
+  </Card>
+  <Card title="File System Helpers" icon="folder">
+    Directory and file operations made simple
+  </Card>
+  <Card title="Emoji Utilities" icon="face-smile">
+    Discord emoji parsing and animation detection
+  </Card>
+  <Card title="TypeScript Types" icon="code">
+    Advanced type utilities for dot notation object access
+  </Card>
+</CardGroup>
+
+## Why util?
+
+<CardGroup cols={2}>
+  <Card title="Zero Dependencies" icon="feather">
+    No bloat, just pure utility functions
+  </Card>
+  <Card title="TypeScript First" icon="typescript">
+    Built with TypeScript for type safety
+  </Card>
+  <Card title="Lightweight" icon="gauge-high">
+    Small bundle size, fast performance
+  </Card>
+  <Card title="Apache 2.0 License" icon="scale-balanced">
+    Free and open source
+  </Card>
+</CardGroup>
+
+## Quick Example
+
+```typescript
+import { isEven, isDirectory, parseEmoji } from 'theutilyes';
+
+// Type-safe number utilities
+console.log(isEven(4)); // true
+
+// File system helpers
+if (isDirectory('./src')) {
+  console.log('Directory exists');
+}
+
+// Emoji parsing
+const emoji = parseEmoji('<:wave:123456789>');
+console.log(emoji); // :wave:
+```
+
+## Get Started
+
+<CardGroup cols={2}>
+  <Card title="Installation" icon="download" href="/installation">
+    Install util in your project
+  </Card>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Get up and running in minutes
+  </Card>
+  <Card title="API Reference" icon="book" href="/api/overview">
+    Explore all available functions
+  </Card>
+  <Card title="Examples" icon="code" href="/guides/examples">
+    See real-world usage examples
+  </Card>
+</CardGroup>

@@ -1,0 +1,97 @@
+---
+title: Comparison Functions
+description: Functions for comparing values
+---
+
+## isEqual
+
+Check if two items are equal using loose equality (==).
+
+```typescript
+function isEqual(item1: any, item2: any): boolean
+```
+
+### Parameters
+
+<ParamField path="item1" type="any" required>
+  The first item to compare
+</ParamField>
+
+<ParamField path="item2" type="any" required>
+  The second item to compare
+</ParamField>
+
+### Returns
+
+`boolean` - Returns `true` if the items are loosely equal, `false` otherwise
+
+### Examples
+
+```typescript
+import { isEqual } from 'util-library';
+
+// Number comparison
+isEqual(5, 5);        // true
+isEqual(5, "5");      // true (loose equality)
+isEqual(5, 6);        // false
+
+// String comparison
+isEqual("hello", "hello");  // true
+isEqual("hello", "world");  // false
+
+// Object comparison
+const obj = { a: 1 };
+isEqual(obj, obj);    // true
+isEqual({ a: 1 }, { a: 1 });  // false (different references)
+```
+
+<Note>
+  This function uses loose equality (`==`) rather than strict equality (`===`), which means type coercion may occur.
+</Note>
+
+---
+
+## isNotEqual
+
+Check if two items are not equal. This is the inverse of `isEqual`.
+
+```typescript
+function isNotEqual(item1: any, item2: any): boolean
+```
+
+### Parameters
+
+<ParamField path="item1" type="any" required>
+  The first item to compare
+</ParamField>
+
+<ParamField path="item2" type="any" required>
+  The second item to compare
+</ParamField>
+
+### Returns
+
+`boolean` - Returns `true` if the items are not equal, `false` otherwise
+
+### Examples
+
+```typescript
+import { isNotEqual } from 'util-library';
+
+// Number comparison
+isNotEqual(5, 6);        // true
+isNotEqual(5, 5);        // false
+isNotEqual(5, "5");      // false (loose equality)
+
+// String comparison
+isNotEqual("hello", "world");  // true
+isNotEqual("hello", "hello");  // false
+```
+
+### Implementation
+
+```typescript
+export function isNotEqual(item1, item2) {
+  return !isEqual(item1, item2);
+}
+```

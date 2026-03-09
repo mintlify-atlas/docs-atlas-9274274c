@@ -1,0 +1,148 @@
+---
+title: Emoji Functions
+description: Utilities for parsing and working with Discord-style emojis
+---
+
+## isAnimatedEmoji
+
+Check if a Discord-formatted emoji is animated.
+
+```typescript
+function isAnimatedEmoji(emoji: string): boolean
+```
+
+### Parameters
+
+<ParamField path="emoji" type="string" required>
+  A Discord emoji string in the format `<a:name:id>` or `<:name:id>`
+</ParamField>
+
+### Returns
+
+`boolean` - Returns `true` if the emoji is animated (starts with `<a:`), `false` otherwise
+
+### Examples
+
+```typescript
+import { isAnimatedEmoji } from 'util-library';
+
+// Animated emoji
+isAnimatedEmoji('<a:partyparrot:123456789>')  // true
+isAnimatedEmoji('<a:dancing:987654321>')      // true
+
+// Static emoji
+isAnimatedEmoji('<:smile:123456789>')         // false
+isAnimatedEmoji('<:thumbsup:987654321>')      // false
+```
+
+<Note>
+  Discord emojis are formatted as `<a:name:id>` for animated emojis and `<:name:id>` for static emojis. The "a" at the beginning indicates animation.
+</Note>
+
+### Implementation
+
+```typescript
+export function isAnimatedEmoji(emoji) {
+  const [animated, _, _] = emoji.slice(1, -1).split(":");
+  return animated == `a`;
+}
+```
+
+---
+
+## parseEmoji
+
+Extract the emoji name from a Discord-formatted emoji string.
+
+```typescript
+function parseEmoji(emoji: string): string
+```
+
+### Parameters
+
+<ParamField path="emoji" type="string" required>
+  A Discord emoji string in the format `<a:name:id>` or `<:name:id>`
+</ParamField>
+
+### Returns
+
+`string` - The emoji name in standard format (`:name:`)
+
+### Examples
+
+```typescript
+import { parseEmoji } from 'util-library';
+
+// Parse animated emoji
+parseEmoji('<a:partyparrot:123456789>')  // Returns: ':partyparrot:'
+parseEmoji('<a:dancing:987654321>')      // Returns: ':dancing:'
+
+// Parse static emoji
+parseEmoji('<:smile:123456789>')         // Returns: ':smile:'
+parseEmoji('<:thumbsup:987654321>')      // Returns: ':thumbsup:'
+```
+
+<Tip>
+  This function is useful for converting Discord's custom emoji format to a more portable text-based format that can be used across different platforms.
+</Tip>
+
+### Implementation
+
+```typescript
+export function parseEmoji(emoji) {
+  const [_, name, id] = emoji.slice(1, -1).split(":");
+  return `:` + name + `:`;
+}
+```
+
+---
+
+## theField
+
+Download "the field" GIF from GitHub user images.
+
+```typescript
+async function theField(): Promise<void>
+```
+
+### Parameters
+
+No parameters.
+
+### Returns
+
+`Promise<void>` - The function completes when the file is written
+
+### Examples
+
+```typescript
+import { theField } from 'util-library';
+
+// Download the field GIF
+await theField();
+// Creates a file named 'the_field.gif' in the current directory
+```
+
+<Note>
+  This function downloads a specific GIF from GitHub and saves it as "the_field.gif" in the current working directory. It logs "the field" to the console upon success.
+</Note>
+
+### Implementation
+
+```typescript
+export async function theField() {
+  const gif = await robert
+    .get(
+      "https://user-images.githubusercontent.com/68407783/138189140-e045e722-95b3-452c-8680-16fa9737e838.gif"
+    )
+    .send("buffer");
+  fs.writeFile("the_field.gif", gif, function (err) {
+    if (err) console.log(err);
+    console.log("the field");
+  });
+}
+```
+
+<Warning>
+  This function depends on the `robert` HTTP client library. Make sure it is installed and imported correctly. The file write operation is asynchronous but not awaited, so the function may return before the file is fully written.
+</Warning>

@@ -1,0 +1,286 @@
+---
+title: 'Real-World Examples'
+description: 'Practical examples combining multiple utilities from the library'
+icon: 'code'
+---
+
+## File Processing Pipeline
+
+Combine file system utilities with validation functions to build a robust file processing system.
+
+<Steps>
+  <Step title="Filter and validate files">
+    Use `getFiles()` to retrieve files and validate their properties:
+
+    ```typescript
+    import { getFiles, isFile } from 'util-library';
+
+    // Get all TypeScript files from a directory
+    const tsFiles = getFiles('./src', '.ts', true);
+
+    // Validate each file exists and is not a directory
+    const validFiles = tsFiles.filter(file => {
+      try {
+        return isFile(`./src/${file}`);
+      } catch {
+        return false;
+      }
+    });
+
+    console.log(`Found ${validFiles.length} valid TypeScript files`);
+    ```
+  </Step>
+
+  <Step title="Process files based on conditions">
+    Apply conditional logic using the comparison utilities:
+
+    ```typescript
+    import { isEqual, isNotEqual } from 'util-library';
+
+    // Process files based on their status
+    validFiles.forEach((file, index) => {
+      if (isOdd(index)) {
+        console.log(`Processing odd-indexed file: ${file}`);
+      }
+      
+      if (isNotEqual(file, 'index.ts')) {
+        // Process all files except index.ts
+        processFile(file);
+      }
+    });
+    ```
+  </Step>
+
+  <Step title="Apply validation logic">
+    Use boolean utilities for complex validation:
+
+    ```typescript
+    import { toBoolean, isTrue, isFalse } from 'util-library';
+
+    interface FileConfig {
+      path: string;
+      enabled?: boolean | string | number;
+    }
+
+    function shouldProcessFile(config: FileConfig): boolean {
+      // Convert any truthy/falsy value to boolean
+      const enabled = toBoolean(config.enabled);
+      
+      return isTrue(enabled) && isFile(config.path);
+    }
+
+    const configs: FileConfig[] = [
+      { path: './src/app.ts', enabled: 1 },
+      { path: './src/test.ts', enabled: 'yes' },
+      { path: './src/old.ts', enabled: false }
+    ];
+
+    const filesToProcess = configs.filter(shouldProcessFile);
+    ```
+  </Step>
+</Steps>
+
+## Discord Emoji Parser
+
+Build a Discord emoji processor using the emoji utilities.
+
+```typescript
+import { isAnimatedEmoji, parseEmoji } from 'util-library';
+
+interface ProcessedEmoji {
+  original: string;
+  parsed: string;
+  animated: boolean;
+}
+
+function processDiscordEmojis(message: string): ProcessedEmoji[] {
+  // Match Discord emoji format: <:name:id> or <a:name:id>
+  const emojiRegex = /<a?:[^:]+:\d+>/g;
+  const emojis = message.match(emojiRegex) || [];
+
+  return emojis.map(emoji => ({
+    original: emoji,
+    parsed: parseEmoji(emoji),
+    animated: isAnimatedEmoji(emoji)
+  }));
+}
+
+// Example usage
+const message = 'Hello <:smile:123456> and <a:party:789012>!';
+const processed = processDiscordEmojis(message);
+
+processed.forEach(({ original, parsed, animated }) => {
+  console.log(`${original} -> ${parsed} (animated: ${animated})`);
+});
+// Output:
+// <:smile:123456> -> :smile: (animated: false)
+// <a:party:789012> -> :party: (animated: true)
+```
+
+## Data Validation and Filtering
+
+Combine various utilities for data processing pipelines.
+
+```typescript
+import { 
+  isEqual, 
+  isNotEqual, 
+  isOdd, 
+  isEven, 
+  toBoolean, 
+  isTrue 
+} from 'util-library';
+
+interface DataRecord {
+  id: number;
+  status: string;
+  enabled: any;
+}
+
+class DataProcessor {
+  private records: DataRecord[];
+
+  constructor(records: DataRecord[]) {
+    this.records = records;
+  }
+
+  // Get records with odd IDs
+  getOddIdRecords(): DataRecord[] {
+    return this.records.filter(record => isOdd(record.id));
+  }
+
+  // Get records with even IDs
+  getEvenIdRecords(): DataRecord[] {
+    return this.records.filter(record => isEven(record.id));
+  }
+
+  // Get active records (status === 'active' and enabled is truthy)
+  getActiveRecords(): DataRecord[] {
+    return this.records.filter(record => 
+      isEqual(record.status, 'active') && isTrue(toBoolean(record.enabled))
+    );
+  }
+
+  // Get records that need review (status !== 'complete')
+  getRecordsNeedingReview(): DataRecord[] {
+    return this.records.filter(record => 
+      isNotEqual(record.status, 'complete')
+    );
+  }
+}
+
+// Example usage
+const processor = new DataProcessor([
+  { id: 1, status: 'active', enabled: true },
+  { id: 2, status: 'pending', enabled: 1 },
+  { id: 3, status: 'complete', enabled: false },
+  { id: 4, status: 'active', enabled: 'yes' }
+]);
+
+console.log('Odd IDs:', processor.getOddIdRecords());
+console.log('Active:', processor.getActiveRecords());
+console.log('Need review:', processor.getRecordsNeedingReview());
+```
+
+## Advanced Type Checking
+
+Use `isH()` for special value validation in your applications.
+
+```typescript
+import { isH } from 'util-library';
+
+// Validate special inputs
+async function validateSpecialInput(input: any): Promise<boolean> {
+  const isSpecial = await isH(input);
+  
+  if (isSpecial) {
+    console.log('Special value detected!');
+    return true;
+  }
+  
+  return false;
+}
+
+// Example usage with different types
+await validateSpecialInput(8);     // true - number 8
+await validateSpecialInput('h');   // true - string 'h'
+await validateSpecialInput(7);     // false
+await validateSpecialInput('g');   // false
+
+// Use in form validation
+interface FormData {
+  secretCode: string | number;
+}
+
+async function validateForm(data: FormData): Promise<string[]> {
+  const errors: string[] = [];
+  
+  const isValid = await isH(data.secretCode);
+  if (!isValid) {
+    errors.push('Invalid secret code');
+  }
+  
+  return errors;
+}
+```
+
+## Building a File Explorer
+
+Combine file system utilities with conditional logic for a complete file explorer.
+
+```typescript
+import { getFiles, isDirectory, isFile, isOdd, isEven } from 'util-library';
+import * as path from 'path';
+
+interface FileStats {
+  name: string;
+  path: string;
+  isDirectory: boolean;
+  index: number;
+}
+
+class FileExplorer {
+  async scanDirectory(dirPath: string, extension: string = ''): Promise<FileStats[]> {
+    // Get files, create directory if it doesn't exist
+    const files = getFiles(dirPath, extension, true);
+    
+    return files.map((file, index) => {
+      const fullPath = path.join(dirPath, file);
+      
+      return {
+        name: file,
+        path: fullPath,
+        isDirectory: isDirectory(fullPath),
+        index
+      };
+    });
+  }
+
+  groupByPosition(stats: FileStats[]): { odd: FileStats[], even: FileStats[] } {
+    return {
+      odd: stats.filter(s => isOdd(s.index)),
+      even: stats.filter(s => isEven(s.index))
+    };
+  }
+
+  getOnlyFiles(stats: FileStats[]): FileStats[] {
+    return stats.filter(s => !s.isDirectory);
+  }
+
+  getOnlyDirectories(stats: FileStats[]): FileStats[] {
+    return stats.filter(s => s.isDirectory);
+  }
+}
+
+// Example usage
+const explorer = new FileExplorer();
+const stats = await explorer.scanDirectory('./src', '.ts');
+
+const { odd, even } = explorer.groupByPosition(stats);
+console.log(`Odd-indexed items: ${odd.length}`);
+console.log(`Even-indexed items: ${even.length}`);
+
+const files = explorer.getOnlyFiles(stats);
+const dirs = explorer.getOnlyDirectories(stats);
+console.log(`Files: ${files.length}, Directories: ${dirs.length}`);
+```

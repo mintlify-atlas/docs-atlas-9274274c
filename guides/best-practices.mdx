@@ -1,0 +1,375 @@
+---
+title: 'Best Practices'
+description: 'Guidelines and best practices for using the util library effectively'
+icon: 'lightbulb'
+---
+
+## TypeScript Usage
+
+### Leverage Type Safety
+
+The library provides TypeScript definitions for better type safety and IDE support.
+
+```typescript
+import { getFiles, isH } from 'util-library';
+
+// ✅ Good: Use proper types
+const files: string[] = getFiles('./src', '.ts', true);
+
+// ✅ Good: Handle async functions properly
+async function checkValue(input: any): Promise<boolean> {
+  return await isH(input);
+}
+
+// ❌ Bad: Ignoring return types
+getFiles('./src', '.ts', false); // Should capture the returned array
+```
+
+### Type Inference with Utility Functions
+
+```typescript
+import { toBoolean, isEqual } from 'util-library';
+
+// ✅ Good: Let TypeScript infer boolean returns
+function isEnabled(value: any): boolean {
+  return toBoolean(value);
+}
+
+// ✅ Good: Use type guards
+function compareValues<T>(a: T, b: T): boolean {
+  return isEqual(a, b);
+}
+```
+
+## Tree-Shaking and Import Optimization
+
+### Named Imports for Better Bundle Size
+
+Always use named imports to enable tree-shaking and reduce bundle size.
+
+```typescript
+// ✅ Good: Named imports allow tree-shaking
+import { isOdd, isEven, isFile } from 'util-library';
+
+// ❌ Bad: Namespace import includes everything
+import * as utils from 'util-library';
+```
+
+### Import Only What You Need
+
+```typescript
+// ✅ Good: Import only required functions
+import { parseEmoji, isAnimatedEmoji } from 'util-library';
+
+function processEmoji(emoji: string) {
+  if (isAnimatedEmoji(emoji)) {
+    return parseEmoji(emoji);
+  }
+  return emoji;
+}
+
+// ❌ Bad: Importing unused functions
+import { 
+  parseEmoji, 
+  isAnimatedEmoji, 
+  getFiles,    // Not used
+  isDirectory, // Not used
+  theField     // Not used
+} from 'util-library';
+```
+
+## Common Patterns
+
+### Validation Chains
+
+Combine multiple validation functions for robust checks.
+
+```typescript
+import { isTrue, toBoolean, isNotEqual, isFile } from 'util-library';
+
+interface Config {
+  enabled: any;
+  path: string;
+  environment: string;
+}
+
+// ✅ Good: Chain validations logically
+function isValidConfig(config: Config): boolean {
+  // Convert to boolean first
+  const enabled = toBoolean(config.enabled);
+  
+  // Chain multiple conditions
+  return (
+    isTrue(enabled) &&
+    isNotEqual(config.environment, 'production') &&
+    isFile(config.path)
+  );
+}
+
+// ❌ Bad: Mixing library functions with direct comparisons inconsistently
+function isValidConfigBad(config: Config): boolean {
+  return (
+    config.enabled === true &&  // Direct comparison
+    isNotEqual(config.environment, 'production') && // Library function
+    isFile(config.path)  // Library function
+  );
+}
+```
+
+### Error Handling with File Operations
+
+Always wrap file system operations in try-catch blocks.
+
+```typescript
+import { getFiles, isDirectory, isFile } from 'util-library';
+
+// ✅ Good: Proper error handling
+function safeGetFiles(dir: string, ext: string): string[] {
+  try {
+    return getFiles(dir, ext, false);
+  } catch (error) {
+    console.error(`Failed to read directory ${dir}:`, error);
+    return [];
+  }
+}
+
+// ✅ Good: Validate before checking
+function safeCheckPath(path: string): 'file' | 'directory' | 'error' {
+  try {
+    if (isDirectory(path)) return 'directory';
+    if (isFile(path)) return 'file';
+    return 'error';
+  } catch {
+    return 'error';
+  }
+}
+
+// ❌ Bad: No error handling
+function unsafeGetFiles(dir: string, ext: string): string[] {
+  return getFiles(dir, ext, false); // May throw if directory doesn't exist
+}
+```
+
+### Async Function Handling
+
+Properly handle async functions to avoid common pitfalls.
+
+```typescript
+import { isH, theField } from 'util-library';
+
+// ✅ Good: Await async functions
+async function validateInput(input: any): Promise<void> {
+  const isValid = await isH(input);
+  if (!isValid) {
+    throw new Error('Invalid input');
+  }
+}
+
+// ✅ Good: Handle errors in async operations
+async function downloadField(): Promise<void> {
+  try {
+    await theField();
+    console.log('Download complete');
+  } catch (error) {
+    console.error('Download failed:', error);
+  }
+}
+
+// ❌ Bad: Forgetting to await
+function validateInputBad(input: any): void {
+  const isValid = isH(input); // Returns Promise, not boolean!
+  if (isValid) { // This will always be truthy (Promise object)
+    console.log('Valid');
+  }
+}
+```
+
+## Performance Optimization
+
+### Avoid Redundant Function Calls
+
+```typescript
+import { isOdd, isEven, toBoolean } from 'util-library';
+
+// ✅ Good: Call once and reuse
+function processNumber(num: number): string {
+  const odd = isOdd(num);
+  return odd ? 'Number is odd' : 'Number is even';
+}
+
+// ❌ Bad: Multiple calls for same value
+function processNumberBad(num: number): string {
+  if (isOdd(num)) {
+    return 'Number is odd';
+  } else if (isEven(num)) { // Redundant call
+    return 'Number is even';
+  }
+  return 'Unknown';
+}
+
+// ✅ Good: Cache boolean conversions
+function validateMany(values: any[]): boolean[] {
+  return values.map(v => toBoolean(v));
+}
+```
+
+### Efficient File Processing
+
+```typescript
+import { getFiles, isFile } from 'util-library';
+
+// ✅ Good: Use createDirIfNotFound parameter
+function ensureAndGetFiles(dir: string, ext: string): string[] {
+  // Creates directory if needed in one call
+  return getFiles(dir, ext, true);
+}
+
+// ❌ Bad: Manual directory creation
+import * as fs from 'fs';
+
+function ensureAndGetFilesBad(dir: string, ext: string): string[] {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir);
+  }
+  return getFiles(dir, ext, false);
+}
+```
+
+## Common Pitfalls
+
+<Accordion title="Circular dependencies with isEven/isOdd">
+  The source code has circular dependencies between `isEven()`, `isOdd()`, and `isNotOdd()`. Be aware that this may cause issues:
+
+  ```typescript
+  import { isEven, isOdd } from 'util-library';
+
+  // These work, but be cautious with the implementation
+  isOdd(5);  // true
+  isEven(4); // true
+  ```
+
+  **Recommendation**: Use these functions, but be aware of potential stack overflow issues if the implementation changes.
+</Accordion>
+
+<Accordion title="File system operations require paths to exist">
+  `isFile()` and `isDirectory()` will throw errors if the path doesn't exist:
+
+  ```typescript
+  import { isFile, isDirectory } from 'util-library';
+
+  // ❌ Will throw if path doesn't exist
+  const result = isFile('./nonexistent.txt');
+
+  // ✅ Good: Always use try-catch
+  try {
+    const result = isFile('./maybe-exists.txt');
+  } catch {
+    console.log('Path does not exist');
+  }
+
+  // ✅ Better: Check existence first
+  import * as fs from 'fs';
+
+  if (fs.existsSync('./file.txt')) {
+    const isFileResult = isFile('./file.txt');
+  }
+  ```
+</Accordion>
+
+<Accordion title="Double negatives can be confusing">
+  Functions like `isNotOdd()` and `isNotEven()` can make code harder to read:
+
+  ```typescript
+  import { isNotOdd, isNotEven, isEven, isOdd } from 'util-library';
+
+  // ❌ Harder to understand
+  if (isNotOdd(num)) {
+    console.log('Even');
+  }
+
+  // ✅ Clearer intent
+  if (isEven(num)) {
+    console.log('Even');
+  }
+
+  // ❌ Very confusing
+  if (!isNotOdd(num)) {
+    console.log('Odd');
+  }
+
+  // ✅ Much clearer
+  if (isOdd(num)) {
+    console.log('Odd');
+  }
+  ```
+
+  **Recommendation**: Prefer positive assertions (`isOdd`, `isEven`) over negative ones (`isNotOdd`, `isNotEven`).
+</Accordion>
+
+<Accordion title="The theField() function side effects">
+  The `theField()` function downloads and writes a file to disk:
+
+  ```typescript
+  import { theField } from 'util-library';
+
+  // ⚠️ This will download and write 'the_field.gif' to current directory
+  await theField();
+
+  // ✅ Be aware of where it's writing
+  // Consider wrapping to control output location
+  async function downloadFieldToDir(targetDir: string): Promise<void> {
+    const originalCwd = process.cwd();
+    try {
+      process.chdir(targetDir);
+      await theField();
+    } finally {
+      process.chdir(originalCwd);
+    }
+  }
+  ```
+
+  **Recommendation**: Only use `theField()` when you specifically need this GIF file, and be aware it writes to the current working directory.
+</Accordion>
+
+## Code Organization
+
+### Group Related Utilities
+
+```typescript
+// ✅ Good: Group by functionality
+import { isOdd, isEven } from 'util-library'; // Number utilities
+import { parseEmoji, isAnimatedEmoji } from 'util-library'; // Emoji utilities
+import { isFile, isDirectory, getFiles } from 'util-library'; // File utilities
+
+// Or organize in separate modules
+// numberUtils.ts
+export { isOdd, isEven, isNotOdd } from 'util-library';
+
+// emojiUtils.ts
+export { parseEmoji, isAnimatedEmoji } from 'util-library';
+
+// fileUtils.ts
+export { isFile, isDirectory, getFiles } from 'util-library';
+```
+
+### Create Domain-Specific Wrappers
+
+```typescript
+import { isEqual, toBoolean, isTrue } from 'util-library';
+
+// ✅ Good: Create domain-specific abstractions
+class UserValidator {
+  static isActive(user: { status: string; enabled: any }): boolean {
+    return isEqual(user.status, 'active') && isTrue(toBoolean(user.enabled));
+  }
+
+  static isAdmin(user: { role: string }): boolean {
+    return isEqual(user.role, 'admin');
+  }
+}
+
+// Usage is now more semantic
+if (UserValidator.isActive(user)) {
+  // ...
+}
+```

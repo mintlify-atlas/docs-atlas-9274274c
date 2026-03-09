@@ -1,0 +1,59 @@
+---
+title: API Reference Overview
+description: Complete reference for all utility functions and types
+---
+
+This utility library provides a collection of helper functions for common programming tasks including:
+
+## Comparison Functions
+
+Functions for comparing values:
+
+- `isEqual(item1, item2)` - Check if two items are equal
+- `isNotEqual(item1, item2)` - Check if two items are not equal
+
+[View Comparison Functions →](/api/comparison)
+
+## Type Checking & Conversion
+
+Functions for type checking and boolean operations:
+
+- `isOdd(num)` - Check if a number is odd
+- `isEven(num)` - Check if a number is even
+- `isNotOdd(num)` - Check if a number is not odd
+- `isNotEven(num)` - Check if a number is not even
+- `isTrue(val)` - Check if a value is truthy
+- `isFalse(val)` - Check if a value is falsy
+- `toBoolean(item)` - Convert any value to boolean
+- `isH(input)` - Check if input is the letter 'h' or number 8
+
+[View Type Checking Functions →](/api/type-checking)
+
+## File System Utilities
+
+Functions for working with files and directories:
+
+- `isDirectory(path)` - Check if a path is a directory
+- `isFile(path)` - Check if a path is a file
+- `getFiles(directory, extension, createDirIfNotFound)` - Get files with a specific extension
+
+[View File System Functions →](/api/file-system)
+
+## Emoji Utilities
+
+Functions for parsing and working with Discord-style emojis:
+
+- `isAnimatedEmoji(emoji)` - Check if an emoji is animated
+- `parseEmoji(emoji)` - Extract emoji name from Discord format
+- `theField()` - Download "the field" GIF
+
+[View Emoji Functions →](/api/emoji)
+
+## TypeScript Types
+
+Advanced TypeScript utility types for working with nested objects:
+
+- `DotNotation<T>` - Generate dot notation paths for object properties
+- `DotToPropType<T, Dot>` - Get property type from dot notation path
+
+[View TypeScript Types →](/api/typescript-types)

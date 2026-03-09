@@ -1,0 +1,301 @@
+---
+title: TypeScript Type Utilities
+description: Advanced TypeScript utility types for working with nested objects
+---
+
+## DotNotation
+
+Generate all possible dot notation paths for accessing properties in a nested object.
+
+```typescript
+type DotNotation<
+  T extends Record<string, any>,
+  Sep extends string = '.',
+  K extends keyof T = keyof T
+> = ...
+```
+
+### Type Parameters
+
+<ParamField path="T" type="Record<string, any>" required>
+  The object type to generate dot notation paths for
+</ParamField>
+
+<ParamField path="Sep" type="string" default=".">
+  The separator to use between property names (defaults to ".")
+</ParamField>
+
+<ParamField path="K" type="keyof T" default="keyof T">
+  Internal parameter for key iteration (not typically set by users)
+</ParamField>
+
+### Returns
+
+A union type of all possible dot notation paths as string literals.
+
+### Examples
+
+```typescript
+import { DotNotation } from 'util-library';
+
+// Simple object
+const user = {
+  name: 'John',
+  age: 30
+};
+type UserPaths = DotNotation<typeof user>;
+// Type: 'name' | 'age'
+
+// Nested object
+const config = {
+  a: {
+    b: {
+      c: 1,
+      d: 2
+    }
+  },
+  e: 'test'
+};
+type ConfigPaths = DotNotation<typeof config>;
+// Type: 'a' | 'a.b' | 'a.b.c' | 'a.b.d' | 'e'
+
+// With arrays (arrays don't expand)
+const data = {
+  items: [1, 2, 3],
+  nested: {
+    value: 'hello'
+  }
+};
+type DataPaths = DotNotation<typeof data>;
+// Type: 'items' | 'nested' | 'nested.value'
+```
+
+<Note>
+  Arrays are treated as terminal nodes and don't expand into dot notation paths for their indices. Only object properties are traversed.
+</Note>
+
+### Use Cases
+
+<Tabs>
+  <Tab title="Type-Safe Path Access">
+    ```typescript
+    const obj = {
+      user: {
+        profile: {
+          name: 'Alice',
+          email: 'alice@example.com'
+        }
+      }
+    };
+
+    type ValidPath = DotNotation<typeof obj>;
+    // 'user' | 'user.profile' | 'user.profile.name' | 'user.profile.email'
+
+    function getValue<T extends Record<string, any>>(
+      obj: T,
+      path: DotNotation<T>
+    ) {
+      // Implementation...
+    }
+
+    getValue(obj, 'user.profile.name');  // ✓ Valid
+    getValue(obj, 'user.invalid');       // ✗ Type error
+    ```
+  </Tab>
+  <Tab title="Configuration Validation">
+    ```typescript
+    interface Config {
+      database: {
+        host: string;
+        port: number;
+        credentials: {
+          user: string;
+          password: string;
+        };
+      };
+      api: {
+        baseUrl: string;
+      };
+    }
+
+    type ConfigPath = DotNotation<Config>;
+    // 'database' | 'database.host' | 'database.port' |
+    // 'database.credentials' | 'database.credentials.user' |
+    // 'database.credentials.password' | 'api' | 'api.baseUrl'
+
+    function getConfigValue(path: ConfigPath) {
+      // Type-safe config access
+    }
+    ```
+  </Tab>
+</Tabs>
+
+### Full Type Definition
+
+```typescript
+export type DotNotation<
+  T extends Record<string, any>,
+  Sep extends string = '.',
+  K extends keyof T = keyof T
+> = K extends string
+  ? T[K] extends any[]
+    ? K
+    : T[K] extends Record<string, any>
+    ? `${K}${Sep}${DotNotation<T[K]>}` | K
+    : K
+  : never;
+```
+
+---
+
+## DotToPropType
+
+Get the type of a property at a specific dot notation path in a nested object.
+
+```typescript
+type DotToPropType<
+  T extends Record<string, any>,
+  Dot extends DotNotation<T, Sep>,
+  Sep extends string = '.'
+> = ...
+```
+
+### Type Parameters
+
+<ParamField path="T" type="Record<string, any>" required>
+  The object type to extract the property type from
+</ParamField>
+
+<ParamField path="Dot" type="DotNotation<T, Sep>" required>
+  The dot notation path to the property (must be a valid path from DotNotation)
+</ParamField>
+
+<ParamField path="Sep" type="string" default=".">
+  The separator used in the dot notation (defaults to ".")
+</ParamField>
+
+### Returns
+
+The TypeScript type of the property at the specified path.
+
+### Examples
+
+```typescript
+import { DotToPropType, DotNotation } from 'util-library';
+
+const obj = {
+  a: {
+    b: {
+      c: 1,
+      d: 2
+    }
+  },
+  e: 'test'
+};
+
+// Get type at 'a.b'
+type TypeAtAB = DotToPropType<typeof obj, 'a.b'>;
+// Type: { c: number; d: number }
+
+// Get type at 'a.b.c'
+type TypeAtABC = DotToPropType<typeof obj, 'a.b.c'>;
+// Type: number
+
+// Get type at 'e'
+type TypeAtE = DotToPropType<typeof obj, 'e'>;
+// Type: string
+```
+
+<Tip>
+  Combine `DotNotation` and `DotToPropType` to create fully type-safe property access functions for nested objects.
+</Tip>
+
+### Use Cases
+
+<Tabs>
+  <Tab title="Type-Safe Getter">
+    ```typescript
+    function getProperty<
+      T extends Record<string, any>,
+      P extends DotNotation<T>
+    >(
+      obj: T,
+      path: P
+    ): DotToPropType<T, P> {
+      const keys = path.split('.');
+      let result: any = obj;
+      for (const key of keys) {
+        result = result[key];
+      }
+      return result;
+    }
+
+    const config = {
+      database: {
+        host: 'localhost',
+        port: 5432
+      }
+    };
+
+    const host = getProperty(config, 'database.host');
+    // Type: string (inferred automatically!)
+
+    const port = getProperty(config, 'database.port');
+    // Type: number
+    ```
+  </Tab>
+  <Tab title="Type-Safe Setter">
+    ```typescript
+    function setProperty<
+      T extends Record<string, any>,
+      P extends DotNotation<T>
+    >(
+      obj: T,
+      path: P,
+      value: DotToPropType<T, P>
+    ): void {
+      const keys = path.split('.');
+      let current: any = obj;
+      for (let i = 0; i < keys.length - 1; i++) {
+        current = current[keys[i]];
+      }
+      current[keys[keys.length - 1]] = value;
+    }
+
+    const settings = {
+      user: {
+        preferences: {
+          theme: 'dark',
+          fontSize: 14
+        }
+      }
+    };
+
+    setProperty(settings, 'user.preferences.theme', 'light');  // ✓ Valid
+    setProperty(settings, 'user.preferences.fontSize', 16);    // ✓ Valid
+    setProperty(settings, 'user.preferences.theme', 123);      // ✗ Type error
+    ```
+  </Tab>
+</Tabs>
+
+### Full Type Definition
+
+```typescript
+export type DotToPropType<
+  T extends Record<string, any>,
+  Dot extends DotNotation<T, Sep>,
+  Sep extends string = '.'
+> = Dot extends `${infer First}${Sep}${infer Rest}`
+  ? DotToPropType<
+      T[First],
+      Rest extends DotNotation<T[First]> ? Rest : never,
+      Sep
+    >
+  : Dot extends `${infer First}`
+  ? T[First]
+  : T;
+```
+
+<Note>
+  This type uses recursive conditional types to traverse the object structure and extract the type at the specified path. It's fully type-safe and will produce compile-time errors for invalid paths.
+</Note>

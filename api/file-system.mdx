@@ -1,0 +1,160 @@
+---
+title: File System Functions
+description: Utilities for working with files and directories
+---
+
+## isDirectory
+
+Check if a given path is a directory.
+
+```typescript
+function isDirectory(path: string): boolean
+```
+
+### Parameters
+
+<ParamField path="path" type="string" required>
+  The file system path to check
+</ParamField>
+
+### Returns
+
+`boolean` - Returns `true` if the path is a directory, `false` otherwise
+
+### Examples
+
+```typescript
+import { isDirectory } from 'util-library';
+
+isDirectory('./src');           // true
+isDirectory('./package.json');  // false
+isDirectory('/usr/local/bin');  // true
+```
+
+<Warning>
+  This function will throw an error if the path does not exist. Make sure the path exists before calling this function.
+</Warning>
+
+### Implementation
+
+```typescript
+export function isDirectory(path) {
+  return fs.lstatSync(path).isDirectory();
+}
+```
+
+---
+
+## isFile
+
+Check if a given path is a file (not a directory).
+
+```typescript
+function isFile(path: string): boolean
+```
+
+### Parameters
+
+<ParamField path="path" type="string" required>
+  The file system path to check
+</ParamField>
+
+### Returns
+
+`boolean` - Returns `true` if the path is a file, `false` otherwise
+
+### Examples
+
+```typescript
+import { isFile } from 'util-library';
+
+isFile('./package.json');  // true
+isFile('./src');           // false
+isFile('./README.md');     // true
+```
+
+<Warning>
+  This function will throw an error if the path does not exist. Make sure the path exists before calling this function.
+</Warning>
+
+### Implementation
+
+```typescript
+export function isFile(path) {
+  return !isDirectory(path);
+}
+```
+
+<Note>
+  This function is implemented as the inverse of `isDirectory`, so it will return `true` for any path that is not a directory (including symlinks, pipes, etc.).
+</Note>
+
+---
+
+## getFiles
+
+Get all files with a specific extension from a directory.
+
+```typescript
+function getFiles(
+  directory: string,
+  extension: string,
+  createDirIfNotFound: boolean
+): string[]
+```
+
+### Parameters
+
+<ParamField path="directory" type="string" required>
+  The directory path to search in
+</ParamField>
+
+<ParamField path="extension" type="string" required>
+  The file extension to filter by (e.g., ".txt", ".js")
+</ParamField>
+
+<ParamField path="createDirIfNotFound" type="boolean" required>
+  If `true`, creates the directory if it doesn't exist. If `false`, throws an error if the directory doesn't exist.
+</ParamField>
+
+### Returns
+
+`string[]` - An array of file names (not full paths) that match the extension
+
+### Examples
+
+```typescript
+import { getFiles } from 'util-library';
+
+// Get all JavaScript files
+const jsFiles = getFiles('./src', '.js', false);
+// Returns: ['index.js', 'utils.js', 'config.js']
+
+// Get all TypeScript files, create directory if needed
+const tsFiles = getFiles('./dist', '.ts', true);
+
+// Get all markdown files
+const mdFiles = getFiles('./docs', '.md', false);
+// Returns: ['README.md', 'CONTRIBUTING.md']
+```
+
+<Tip>
+  Set `createDirIfNotFound` to `true` when you want to ensure the directory exists before reading files. This is useful for output directories that may not exist yet.
+</Tip>
+
+### Implementation
+
+```typescript
+export function getFiles(
+  directory: string,
+  extension: string,
+  createDirIfNotFound: boolean
+): string[] {
+  if (createDirIfNotFound && !fs.existsSync(directory)) fs.mkdirSync(directory);
+  return fs.readdirSync(directory).filter((file) => file.endsWith(extension));
+}
+```
+
+<Note>
+  This function only returns file names, not full paths. To get full paths, you would need to join the directory path with each file name using `path.join(directory, fileName)`.
+</Note>

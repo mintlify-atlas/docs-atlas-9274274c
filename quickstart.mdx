@@ -1,80 +1,166 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Get up and running with theutilyes in minutes
 ---
 
-## Get started in three steps
+## Get Started with theutilyes
 
-Get your documentation site running locally and make your first customization.
+This guide will help you start using `theutilyes` utility functions in your project.
 
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+<Steps>
+  <Step title="Install the package">
+    First, install `theutilyes` via npm, yarn, or pnpm:
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+    ```bash
+    npm install theutilyes
+    ```
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    See the [Installation](/installation) guide for other package managers.
+  </Step>
 
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+  <Step title="Import the utilities">
+    Import the functions you need from the package:
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    ```typescript
+    import { isOdd, isEven, isEqual, getFiles } from 'theutilyes';
+    ```
+    
+    <Tip>
+      You can import individual functions or use wildcard imports: `import * as util from 'theutilyes'`
+    </Tip>
+  </Step>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+  <Step title="Use the utilities">
+    Start using the utility functions in your code:
+    
+    ```typescript
+    import { isOdd, isEven, isEqual, getFiles } from 'theutilyes';
+    
+    // Check if numbers are odd or even
+    console.log(isOdd(3));   // true
+    console.log(isEven(4));  // true
+    
+    // Compare values
+    console.log(isEqual(5, 5));       // true
+    console.log(isEqual('a', 'b'));   // false
+    
+    // Get files from a directory
+    const jsFiles = getFiles('./src', '.js', false);
+    console.log(jsFiles); // Array of .js files
+    ```
+  </Step>
+</Steps>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+## Common Use Cases
 
-### Step 3: Go live
+### Working with Numbers
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+```typescript
+import { isOdd, isEven, isNotOdd, isNotEven } from 'theutilyes';
 
-## Next steps
+const num = 42;
 
-Now that you have your docs running, explore these key features:
+if (isEven(num)) {
+  console.log('Number is even');
+}
 
-<CardGroup cols={2}>
+if (isNotOdd(num)) {
+  console.log('Number is not odd');
+}
+```
 
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
+### File System Operations
 
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
+```typescript
+import { getFiles, isDirectory, isFile } from 'theutilyes';
 
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
+// Get all TypeScript files from a directory
+const tsFiles: string[] = getFiles('./src', '.ts', false);
 
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
+// Create directory if it doesn't exist
+const configFiles: string[] = getFiles('./config', '.json', true);
 
-</CardGroup>
+// Check if path is a directory or file
+if (isDirectory('./src')) {
+  console.log('It\'s a directory');
+}
+
+if (isFile('./package.json')) {
+  console.log('It\'s a file');
+}
+```
+
+### Boolean Conversions
+
+```typescript
+import { toBoolean, isTrue, isFalse } from 'theutilyes';
+
+const value = 'hello';
+
+console.log(toBoolean(value));  // true
+console.log(isTrue(value));     // true
+console.log(isFalse(0));        // true
+```
+
+### Discord Emoji Utilities
+
+```typescript
+import { isAnimatedEmoji, parseEmoji } from 'theutilyes';
+
+const emoji = '<a:partyparrot:123456789>';
+
+if (isAnimatedEmoji(emoji)) {
+  console.log('This is an animated emoji!');
+}
+
+const parsed = parseEmoji(emoji);
+console.log(parsed); // :partyparrot:
+```
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  The emoji functions expect Discord emoji format: `<a:name:id>` for animated or `<:name:id>` for static emojis.
 </Note>
+
+## TypeScript Support
+
+`theutilyes` is written in TypeScript and provides type definitions. Some functions include explicit type annotations:
+
+```typescript
+import { getFiles, isH } from 'theutilyes';
+
+// getFiles has full type signature
+const files: string[] = getFiles(
+  './src',      // directory: string
+  '.ts',        // extension: string
+  false         // createDirIfNotFound: boolean
+);
+
+// isH checks for the number 8 or string 'h'
+const result = await isH(8);      // true
+const result2 = await isH('h');   // true
+const result3 = await isH(7);     // false
+```
+
+## Easter Egg
+
+```typescript
+import { theField } from 'theutilyes';
+
+// Downloads a special gif to your current directory
+await theField();
+```
+
+<Tip>
+  This function downloads a gif file to your current directory as `the_field.gif`. Use with caution!
+</Tip>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="API Reference" icon="book" href="/api/overview">
+    Explore the complete API documentation
+  </Card>
+  <Card title="Examples" icon="code" href="/guides/examples">
+    See more advanced examples and patterns
+  </Card>
+</CardGroup>

@@ -1,0 +1,336 @@
+---
+title: Type Checking Functions
+description: Functions for type checking and boolean operations
+---
+
+## Number Parity Functions
+
+### isOdd
+
+Check if a number is odd.
+
+```typescript
+function isOdd(num: number): boolean
+```
+
+#### Parameters
+
+<ParamField path="num" type="number" required>
+  The number to check
+</ParamField>
+
+#### Returns
+
+`boolean` - Returns `true` if the number is odd, `false` otherwise
+
+#### Examples
+
+```typescript
+import { isOdd } from 'util-library';
+
+isOdd(1);   // true
+isOdd(2);   // false
+isOdd(3);   // true
+isOdd(0);   // false
+isOdd(-1);  // true
+isOdd(-2);  // false
+```
+
+---
+
+### isEven
+
+Check if a number is even.
+
+```typescript
+function isEven(num: number): boolean
+```
+
+#### Parameters
+
+<ParamField path="num" type="number" required>
+  The number to check
+</ParamField>
+
+#### Returns
+
+`boolean` - Returns `true` if the number is even, `false` otherwise
+
+#### Examples
+
+```typescript
+import { isEven } from 'util-library';
+
+isEven(2);   // true
+isEven(1);   // false
+isEven(4);   // true
+isEven(0);   // true
+isEven(-2);  // true
+isEven(-1);  // false
+```
+
+#### Implementation
+
+```typescript
+export function isEven(num) {
+  return isNotOdd(num);
+}
+```
+
+---
+
+### isNotOdd
+
+Check if a number is not odd (i.e., even).
+
+```typescript
+function isNotOdd(num: number): boolean
+```
+
+<Warning>
+  There are two definitions of `isNotOdd` in the source code at lines 34 and 38. This creates circular logic between `isEven` and `isNotOdd`.
+</Warning>
+
+#### Parameters
+
+<ParamField path="num" type="number" required>
+  The number to check
+</ParamField>
+
+#### Returns
+
+`boolean` - Returns `true` if the number is not odd, `false` otherwise
+
+#### Examples
+
+```typescript
+import { isNotOdd } from 'util-library';
+
+isNotOdd(2);   // true
+isNotOdd(1);   // false
+isNotOdd(4);   // true
+```
+
+---
+
+### isNotEven
+
+Check if a number is not even (i.e., odd).
+
+```typescript
+function isNotEven(num: number): boolean
+```
+
+#### Parameters
+
+<ParamField path="num" type="number" required>
+  The number to check
+</ParamField>
+
+#### Returns
+
+`boolean` - Returns `true` if the number is not even, `false` otherwise
+
+#### Examples
+
+```typescript
+import { isNotEven } from 'util-library';
+
+isNotEven(1);   // true
+isNotEven(2);   // false
+isNotEven(3);   // true
+```
+
+#### Implementation
+
+```typescript
+export function isNotEven(num) {
+  return !isNotOdd(num);
+}
+```
+
+---
+
+## Boolean Conversion Functions
+
+### toBoolean
+
+Convert any value to a boolean using JavaScript's truthiness rules.
+
+```typescript
+function toBoolean(item: any): boolean
+```
+
+#### Parameters
+
+<ParamField path="item" type="any" required>
+  The value to convert to boolean
+</ParamField>
+
+#### Returns
+
+`boolean` - The boolean representation of the value
+
+#### Examples
+
+```typescript
+import { toBoolean } from 'util-library';
+
+// Truthy values
+toBoolean(1);          // true
+toBoolean("hello");    // true
+toBoolean([]);         // true
+toBoolean({});         // true
+toBoolean(true);       // true
+
+// Falsy values
+toBoolean(0);          // false
+toBoolean("");         // false
+toBoolean(null);       // false
+toBoolean(undefined);  // false
+toBoolean(false);      // false
+toBoolean(NaN);        // false
+```
+
+#### Implementation
+
+```typescript
+export function toBoolean(item) {
+  return !!item;
+}
+```
+
+---
+
+### isTrue
+
+Check if a value is truthy.
+
+```typescript
+function isTrue(val: any): boolean
+```
+
+#### Parameters
+
+<ParamField path="val" type="any" required>
+  The value to check
+</ParamField>
+
+#### Returns
+
+`boolean` - Returns `true` if the value is truthy, `false` otherwise
+
+#### Examples
+
+```typescript
+import { isTrue } from 'util-library';
+
+isTrue(1);          // true
+isTrue("hello");    // true
+isTrue(true);       // true
+isTrue(0);          // false
+isTrue("");         // false
+isTrue(null);       // false
+```
+
+#### Implementation
+
+```typescript
+export function isTrue(val) {
+  return toBoolean(val) ? true : false;
+}
+```
+
+---
+
+### isFalse
+
+Check if a value is falsy.
+
+```typescript
+function isFalse(val: any): boolean
+```
+
+#### Parameters
+
+<ParamField path="val" type="any" required>
+  The value to check
+</ParamField>
+
+#### Returns
+
+`boolean` - Returns `true` if the value is falsy, `false` otherwise
+
+#### Examples
+
+```typescript
+import { isFalse } from 'util-library';
+
+isFalse(0);          // true
+isFalse("");         // true
+isFalse(null);       // true
+isFalse(undefined);  // true
+isFalse(1);          // false
+isFalse("hello");    // false
+```
+
+#### Implementation
+
+```typescript
+export function isFalse(val) {
+  return !isTrue(val);
+}
+```
+
+---
+
+## Special Validators
+
+### isH
+
+Check if the input is the letter 'h' (as a string) or the number 8.
+
+```typescript
+async function isH(input: any): Promise<boolean>
+```
+
+#### Parameters
+
+<ParamField path="input" type="any" required>
+  The value to check
+</ParamField>
+
+#### Returns
+
+`Promise<boolean>` - Returns `true` if the input is 'h' or 8, `false` otherwise
+
+#### Examples
+
+```typescript
+import { isH } from 'util-library';
+
+// Valid H values
+await isH('h');    // true
+await isH(8);      // true
+
+// Invalid values
+await isH('H');    // false (case-sensitive)
+await isH('i');    // false
+await isH(7);      // false
+await isH(9);      // false
+await isH('8');    // false (string number)
+```
+
+<Note>
+  This is an async function. The reason for the "H" = 8 association is likely a reference to the visual similarity between the letter H and the number 8.
+</Note>
+
+#### Implementation
+
+```typescript
+export async function isH(input: any) {
+  if (typeof input === 'number' && input === 8) return true;
+  if (typeof input === 'string' && input === 'h') return true;
+  return false;
+}
+```
