@@ -1,0 +1,59 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "util",
+  "projectDescription": "A lightweight TypeScript utility library with helper functions for common operations and TypeScript type utilities.",
+  "theme": "mint",
+  "primaryColor": "#3B82F6",
+  "lightColor": "#60A5FA",
+  "darkColor": "#2563EB",
+  "navigation": {
+    "groups": [
+      {
+        "group": "Get Started",
+        "pages": ["introduction", "installation", "quickstart"]
+      },
+      {
+        "group": "API Reference",
+        "pages": [
+          "api/overview",
+          "api/comparison",
+          "api/type-checking",
+          "api/file-system",
+          "api/emoji",
+          "api/typescript-types"
+        ]
+      },
+      {
+        "group": "Guides",
+        "pages": ["guides/examples", "guides/best-practices"]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Type-safe comparison and boolean utilities",
+    "File system helpers for directory and file operations",
+    "Discord emoji parsing and animation detection",
+    "Advanced TypeScript type utilities for dot notation",
+    "Zero-dependency utility functions"
+  ],
+  "publicApiSurface": [
+    "isEqual",
+    "isNotEqual",
+    "isOdd",
+    "isEven",
+    "isNotOdd",
+    "isNotEven",
+    "isTrue",
+    "isFalse",
+    "toBoolean",
+    "isH",
+    "isDirectory",
+    "isFile",
+    "getFiles",
+    "isAnimatedEmoji",
+    "parseEmoji",
+    "theField",
+    "DotNotation",
+    "DotToPropType"
+  ]
+}
