@@ -13,7 +13,7 @@ Combine file system utilities with validation functions to build a robust file p
     Use `getFiles()` to retrieve files and validate their properties:
 
     ```typescript
-    import { getFiles, isFile } from 'util-library';
+    import { getFiles, isFile } from 'theutilyes';
 
     // Get all TypeScript files from a directory
     const tsFiles = getFiles('./src', '.ts', true);
@@ -35,7 +35,7 @@ Combine file system utilities with validation functions to build a robust file p
     Apply conditional logic using the comparison utilities:
 
     ```typescript
-    import { isEqual, isNotEqual } from 'util-library';
+    import { isEqual, isNotEqual } from 'theutilyes';
 
     // Process files based on their status
     validFiles.forEach((file, index) => {
@@ -55,7 +55,7 @@ Combine file system utilities with validation functions to build a robust file p
     Use boolean utilities for complex validation:
 
     ```typescript
-    import { toBoolean, isTrue, isFalse } from 'util-library';
+    import { toBoolean, isTrue, isFalse } from 'theutilyes';
 
     interface FileConfig {
       path: string;
@@ -85,7 +85,7 @@ Combine file system utilities with validation functions to build a robust file p
 Build a Discord emoji processor using the emoji utilities.
 
 ```typescript
-import { isAnimatedEmoji, parseEmoji } from 'util-library';
+import { isAnimatedEmoji, parseEmoji } from 'theutilyes';
 
 interface ProcessedEmoji {
   original: string;
@@ -129,7 +129,7 @@ import {
   isEven, 
   toBoolean, 
   isTrue 
-} from 'util-library';
+} from 'theutilyes';
 
 interface DataRecord {
   id: number;
@@ -187,7 +187,7 @@ console.log('Need review:', processor.getRecordsNeedingReview());
 Use `isH()` for special value validation in your applications.
 
 ```typescript
-import { isH } from 'util-library';
+import { isH } from 'theutilyes';
 
 // Validate special inputs
 async function validateSpecialInput(input: any): Promise<boolean> {
@@ -229,7 +229,7 @@ async function validateForm(data: FormData): Promise<string[]> {
 Combine file system utilities with conditional logic for a complete file explorer.
 
 ```typescript
-import { getFiles, isDirectory, isFile, isOdd, isEven } from 'util-library';
+import { getFiles, isDirectory, isFile, isOdd, isEven } from 'theutilyes';
 import * as path from 'path';
 
 interface FileStats {

@@ -11,7 +11,7 @@ icon: 'lightbulb'
 The library provides TypeScript definitions for better type safety and IDE support.
 
 ```typescript
-import { getFiles, isH } from 'util-library';
+import { getFiles, isH } from 'theutilyes';
 
 // ✅ Good: Use proper types
 const files: string[] = getFiles('./src', '.ts', true);
@@ -28,7 +28,7 @@ getFiles('./src', '.ts', false); // Should capture the returned array
 ### Type Inference with Utility Functions
 
 ```typescript
-import { toBoolean, isEqual } from 'util-library';
+import { toBoolean, isEqual } from 'theutilyes';
 
 // ✅ Good: Let TypeScript infer boolean returns
 function isEnabled(value: any): boolean {
@@ -49,17 +49,17 @@ Always use named imports to enable tree-shaking and reduce bundle size.
 
 ```typescript
 // ✅ Good: Named imports allow tree-shaking
-import { isOdd, isEven, isFile } from 'util-library';
+import { isOdd, isEven, isFile } from 'theutilyes';
 
 // ❌ Bad: Namespace import includes everything
-import * as utils from 'util-library';
+import * as utils from 'theutilyes';
 ```
 
 ### Import Only What You Need
 
 ```typescript
 // ✅ Good: Import only required functions
-import { parseEmoji, isAnimatedEmoji } from 'util-library';
+import { parseEmoji, isAnimatedEmoji } from 'theutilyes';
 
 function processEmoji(emoji: string) {
   if (isAnimatedEmoji(emoji)) {
@@ -75,7 +75,7 @@ import {
   getFiles,    // Not used
   isDirectory, // Not used
   theField     // Not used
-} from 'util-library';
+} from 'theutilyes';
 ```
 
 ## Common Patterns
@@ -85,7 +85,7 @@ import {
 Combine multiple validation functions for robust checks.
 
 ```typescript
-import { isTrue, toBoolean, isNotEqual, isFile } from 'util-library';
+import { isTrue, toBoolean, isNotEqual, isFile } from 'theutilyes';
 
 interface Config {
   enabled: any;
@@ -121,7 +121,7 @@ function isValidConfigBad(config: Config): boolean {
 Always wrap file system operations in try-catch blocks.
 
 ```typescript
-import { getFiles, isDirectory, isFile } from 'util-library';
+import { getFiles, isDirectory, isFile } from 'theutilyes';
 
 // ✅ Good: Proper error handling
 function safeGetFiles(dir: string, ext: string): string[] {
@@ -155,7 +155,7 @@ function unsafeGetFiles(dir: string, ext: string): string[] {
 Properly handle async functions to avoid common pitfalls.
 
 ```typescript
-import { isH, theField } from 'util-library';
+import { isH, theField } from 'theutilyes';
 
 // ✅ Good: Await async functions
 async function validateInput(input: any): Promise<void> {
@@ -189,7 +189,7 @@ function validateInputBad(input: any): void {
 ### Avoid Redundant Function Calls
 
 ```typescript
-import { isOdd, isEven, toBoolean } from 'util-library';
+import { isOdd, isEven, toBoolean } from 'theutilyes';
 
 // ✅ Good: Call once and reuse
 function processNumber(num: number): string {
@@ -216,7 +216,7 @@ function validateMany(values: any[]): boolean[] {
 ### Efficient File Processing
 
 ```typescript
-import { getFiles, isFile } from 'util-library';
+import { getFiles, isFile } from 'theutilyes';
 
 // ✅ Good: Use createDirIfNotFound parameter
 function ensureAndGetFiles(dir: string, ext: string): string[] {
@@ -241,7 +241,7 @@ function ensureAndGetFilesBad(dir: string, ext: string): string[] {
   The source code has circular dependencies between `isEven()`, `isOdd()`, and `isNotOdd()`. Be aware that this may cause issues:
 
   ```typescript
-  import { isEven, isOdd } from 'util-library';
+  import { isEven, isOdd } from 'theutilyes';
 
   // These work, but be cautious with the implementation
   isOdd(5);  // true
@@ -255,7 +255,7 @@ function ensureAndGetFilesBad(dir: string, ext: string): string[] {
   `isFile()` and `isDirectory()` will throw errors if the path doesn't exist:
 
   ```typescript
-  import { isFile, isDirectory } from 'util-library';
+  import { isFile, isDirectory } from 'theutilyes';
 
   // ❌ Will throw if path doesn't exist
   const result = isFile('./nonexistent.txt');
@@ -280,7 +280,7 @@ function ensureAndGetFilesBad(dir: string, ext: string): string[] {
   Functions like `isNotOdd()` and `isNotEven()` can make code harder to read:
 
   ```typescript
-  import { isNotOdd, isNotEven, isEven, isOdd } from 'util-library';
+  import { isNotOdd, isNotEven, isEven, isOdd } from 'theutilyes';
 
   // ❌ Harder to understand
   if (isNotOdd(num)) {
@@ -310,7 +310,7 @@ function ensureAndGetFilesBad(dir: string, ext: string): string[] {
   The `theField()` function downloads and writes a file to disk:
 
   ```typescript
-  import { theField } from 'util-library';
+  import { theField } from 'theutilyes';
 
   // ⚠️ This will download and write 'the_field.gif' to current directory
   await theField();
@@ -337,25 +337,25 @@ function ensureAndGetFilesBad(dir: string, ext: string): string[] {
 
 ```typescript
 // ✅ Good: Group by functionality
-import { isOdd, isEven } from 'util-library'; // Number utilities
-import { parseEmoji, isAnimatedEmoji } from 'util-library'; // Emoji utilities
-import { isFile, isDirectory, getFiles } from 'util-library'; // File utilities
+import { isOdd, isEven } from 'theutilyes'; // Number utilities
+import { parseEmoji, isAnimatedEmoji } from 'theutilyes'; // Emoji utilities
+import { isFile, isDirectory, getFiles } from 'theutilyes'; // File utilities
 
 // Or organize in separate modules
 // numberUtils.ts
-export { isOdd, isEven, isNotOdd } from 'util-library';
+export { isOdd, isEven, isNotOdd } from 'theutilyes';
 
 // emojiUtils.ts
-export { parseEmoji, isAnimatedEmoji } from 'util-library';
+export { parseEmoji, isAnimatedEmoji } from 'theutilyes';
 
 // fileUtils.ts
-export { isFile, isDirectory, getFiles } from 'util-library';
+export { isFile, isDirectory, getFiles } from 'theutilyes';
 ```
 
 ### Create Domain-Specific Wrappers
 
 ```typescript
-import { isEqual, toBoolean, isTrue } from 'util-library';
+import { isEqual, toBoolean, isTrue } from 'theutilyes';
 
 // ✅ Good: Create domain-specific abstractions
 class UserValidator {
